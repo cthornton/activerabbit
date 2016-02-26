@@ -13,7 +13,7 @@ module ActiveRabbit::Configuration
     def initialize(namespace_name = nil, parent_context = nil, default_options = {})
       @parent_context = parent_context
       @default_options = default_options
-      @child_contexes = []
+      @child_contexes = {}
       @config_values = {}
       @namespace_name = normalize_name(namespace_name) if namespace_name
       if parent_context && parent_context.namespace_name && !parent_context.namespace_name.empty?
@@ -66,9 +66,37 @@ module ActiveRabbit::Configuration
 
     def namespace(name, default_options = {}, &block)
       raise ArgumentError, 'block not given' unless block_given?
+      name = normalize_name(name)
       context = self.class.new(name, self, default_options)
       context.configure(&block)
-      child_contexes << context
+      child_contexes[name] = context
+    end
+
+    # Given a fully qualified value, i.e. "some.namespace.some-value",
+    # returns that value, or nil
+    def search_values(fully_qualified_name)
+      search_pieces(fully_qualified_name.split('.'))
+    end
+
+    def search_values!(fully_qualified_name)
+      search_values(fully_qualified_name) || raise(ArgumentError, "Unknown value #{fully_qualified_name}")
+    end
+
+    def search_pieces(fully_qualified_name_array)
+      # Last item
+      if !fully_qualified_name_array.any?
+        return nil
+      elsif fully_qualified_name_array.size == 1
+        item = fully_qualified_name_array
+        return config_values[item]
+      else
+        search = fully_qualified_name_array.shift
+        if(context =  child_contexes[search])
+          return context.search_pieces(fully_qualified_name_array)
+        else
+          return null
+        end
+      end
     end
 
     def configure(&block)
@@ -78,7 +106,7 @@ module ActiveRabbit::Configuration
 
     def flatten_contexes
       all_contexes = [this]
-      child_contexes.each do |child|
+      child_contexes.values.each do |child|
         all_contexes.concat(child.flatten_contexes)
       end
       all_contexes
@@ -86,10 +114,14 @@ module ActiveRabbit::Configuration
 
     def all_values
       values = config_values.dup
-      child_contexes.each do |child|
+      child_contexes.values.each do |child|
         values.merge!(child.all_values)
       end
       values
+    end
+
+    def get_channel(bundle)
+      bundle.get_channel(options.fetch(:session))
     end
   end
 end

@@ -1,10 +1,12 @@
 require 'yaml'
 
 module ActiveRabbit::Configuration
-  class Sessions < Hash
+
+  # Specifies a bunch of Bunny configurations
+  class SessionLoader < Hash
     alias_method :define, :[]=
 
-    def load_yaml_file(path_to_yaml, env)
+    def load_yaml_file!(path_to_yaml, env)
       results = YAML.load_file(path_to_yaml).fetch(env.to_s)
       merge!(results)
     end
