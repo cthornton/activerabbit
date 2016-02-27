@@ -16,7 +16,7 @@ module ActiveRabbit::Configuration
     end
 
     def to_session(name)
-      value = fetch(name)
+      value = fetch(name.to_s)
       return value if value.is_a?(Bunny::Session)
       Bunny::Session.new(value)
     end

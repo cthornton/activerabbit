@@ -18,7 +18,9 @@ module ActiveRabbit::Configuration
     # Maps to a Bunny::Exchange
     class Value < Struct.new(:name, :type, :options)
       def to_exchange(bundle)
-        Bunny::Exchange.new(get_channel(bundle), type, name, options)
+        Bunny::Exchange.new(
+            bundle.get_channel(options.fetch(:session)),
+            type, name, options)
       end
     end
   end

@@ -75,11 +75,11 @@ module ActiveRabbit::Configuration
     # Given a fully qualified value, i.e. "some.namespace.some-value",
     # returns that value, or nil
     def search_values(fully_qualified_name)
-      search_pieces(fully_qualified_name.split('.'))
+      search_pieces(normalize_name(fully_qualified_name).split('.'))
     end
 
     def search_values!(fully_qualified_name)
-      search_values(fully_qualified_name) || raise(ArgumentError, "Unknown value #{fully_qualified_name}")
+      search_values(fully_qualified_name) || raise(ArgumentError, "Unknown value '#{fully_qualified_name}'")
     end
 
     def search_pieces(fully_qualified_name_array)
@@ -87,7 +87,7 @@ module ActiveRabbit::Configuration
       if !fully_qualified_name_array.any?
         return nil
       elsif fully_qualified_name_array.size == 1
-        item = fully_qualified_name_array
+        item = fully_qualified_name_array[0]
         return config_values[item]
       else
         search = fully_qualified_name_array.shift
@@ -118,10 +118,6 @@ module ActiveRabbit::Configuration
         values.merge!(child.all_values)
       end
       values
-    end
-
-    def get_channel(bundle)
-      bundle.get_channel(options.fetch(:session))
     end
   end
 end

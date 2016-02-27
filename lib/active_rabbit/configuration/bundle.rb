@@ -17,13 +17,17 @@ module ActiveRabbit::Configuration
 
     attr_reader :loaded_sessions
 
+    attr_accessor :environment
+
     alias_method :exchanges, :exchange_context
     alias_method :queues, :queue_context
 
-    def initialize
-      @exchange_contex = Exchange::ExchangeContext.new
+    def initialize(environment: nil)
+      @exchange_context = Exchange::ExchangeContext.new
       @queue_context = Queue::QueueContext.new
       @session_loader = SessionLoader.new
+      @loaded_sessions = {}
+      @environment = environment || ENV['ACTIVERABBIT_ENV'] || 'development'
     end
 
     def load_directory(directory_path)
@@ -31,14 +35,21 @@ module ActiveRabbit::Configuration
         ActiveRabbit.temporarily_taint_configuration(self) do
           glob = File.join(directory_path, '**', '*.rb')
           Dir[glob].each do |file|
-            require file
+            require File.expand_path(file)
+          end
+
+          config_file = File.join(directory_path, 'sessions.yml')
+          if File.exist?(config_file)
+            session_loader.load_yaml_file!(config_file, environment)
           end
         end
       end
     end
 
     def get_session(name)
-      loaded_sessions[name] ||= session_loader.to_session(name)
+      loaded_sessions[name] ||= session_loader.to_session(name).tap do |session|
+        session.start
+      end
     end
 
     def get_channel(name, thread = Thread.current)

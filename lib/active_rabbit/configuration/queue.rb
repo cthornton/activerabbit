@@ -2,7 +2,7 @@ module ActiveRabbit::Configuration
   module Queue
     class QueueContext < Context
       def queue(name, options = {})
-        options = options.dup
+        options = {routing_key: name.to_s}.merge(options.dup)
         queue_name = options.delete(:name) || qualify_name(name)
         value = Value.new(queue_name, effective_options(options))
         add_config_value(name, value)
@@ -40,6 +40,10 @@ module ActiveRabbit::Configuration
         get_channel(bundle).queue(queue_name, queue_only_options)
       end
 
+      def get_channel(bundle)
+        bundle.get_channel(options.fetch(:session))
+      end
+
       def bind(queue, exchange)
         queue.bind(exchange, bind_only_options)
       end
@@ -55,11 +59,11 @@ module ActiveRabbit::Configuration
           raise ArgumentError, "Unknown exchange name '#{qualified_exchange_name}'; perhaps it is not defined?"
         end
 
-        if exchange_value[:session] != options[:session]
+        if exchange_value.options[:session] != options[:session]
           raise ArgumentError, "Queue session does not match binded queue's session"
         end
 
-        exchange_value.to_exchange(channel)
+        exchange_value.to_exchange(bundle)
       end
 
       def get_and_bind_queue(bundle)
