@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = ActiveRabbit::VERSION
   spec.authors       = ['Christopher Thornton']
   spec.email         = ['rmdirbin@gmail.com']
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{RabbitMQ publishers & consumers in a rails-inspired syntax}
+  # spec.description   = %q{TODO: Write a longer description. Optional.}
   spec.homepage      = 'https://github.com/cgthornt/activerabbit'
   spec.license       = "MIT"
 
