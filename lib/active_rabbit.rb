@@ -2,6 +2,7 @@ require 'bunny'
 require 'active_rabbit/version'
 
 module ActiveRabbit
+  autoload :Bundle,        'active_rabbit/bundle'
   autoload :Configuration, 'active_rabbit/configuration'
   autoload :Util,          'active_rabbit/util'
 

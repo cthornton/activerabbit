@@ -1,6 +1,6 @@
 require 'thread'
 
-module ActiveRabbit::Configuration
+module ActiveRabbit
 
   # A giant blob of configuration objects into a single package
   class Bundle
@@ -64,6 +64,10 @@ module ActiveRabbit::Configuration
     def get_and_bind_queue(qualified_name)
       queue_value = queue_context.search_values!(qualified_name)
       queue_value.get_and_bind_queue(self)
+    end
+
+    def publish(qualified_name, message, publish_options = {})
+      get_exchange(qualified_name).publish(message, publish_options)
     end
   end
 end
