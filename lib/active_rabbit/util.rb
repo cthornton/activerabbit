@@ -41,4 +41,14 @@ module ActiveRabbit::Util
 
     Object.module_eval("::#{$1}", __FILE__, __LINE__)
   end
+
+  def self.array_wrap(object)
+    if object.nil?
+      []
+    elsif object.respond_to?(:to_ary)
+      object.to_ary || [object]
+    else
+      [object]
+    end
+  end
 end
