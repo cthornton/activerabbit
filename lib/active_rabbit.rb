@@ -4,6 +4,8 @@ require 'active_rabbit/version'
 module ActiveRabbit
   autoload :Bundle,        'active_rabbit/bundle'
   autoload :Configuration, 'active_rabbit/configuration'
+  autoload :Consumer,      'active_rabbit/consumer'
+  autoload :Message,       'active_rabbit/message'
   autoload :Util,          'active_rabbit/util'
 
   def self.version
@@ -11,7 +13,7 @@ module ActiveRabbit
   end
 
   def self.configuration
-    @default_bundle ||= Configuration::Bundle.new
+    @default_bundle ||= Bundle.new
   end
 
   def self.load_config_directory(directory_path)

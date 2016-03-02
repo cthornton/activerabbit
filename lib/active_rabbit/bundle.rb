@@ -23,9 +23,9 @@ module ActiveRabbit
     alias_method :queues, :queue_context
 
     def initialize(environment: nil)
-      @exchange_context = Exchange::ExchangeContext.new
-      @queue_context = Queue::QueueContext.new
-      @session_loader = SessionLoader.new
+      @exchange_context = Configuration::Exchange::ExchangeContext.new
+      @queue_context = Configuration::Queue::QueueContext.new
+      @session_loader = Configuration::SessionLoader.new
       @loaded_sessions = {}
       @environment = environment || ENV['ACTIVERABBIT_ENV'] || 'development'
     end
