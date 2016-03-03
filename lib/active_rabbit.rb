@@ -4,6 +4,7 @@ require 'logger'
 
 module ActiveRabbit
   autoload :Bundle,        'active_rabbit/bundle'
+  autoload :CLI,           'active_rabbit/cli'
   autoload :Configuration, 'active_rabbit/configuration'
   autoload :Consumer,      'active_rabbit/consumer'
   autoload :Loggable,      'active_rabbit/loggable'
