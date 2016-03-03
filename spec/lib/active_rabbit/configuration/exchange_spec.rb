@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ActiveRabbit::Configuration::Exchange do
-
   it 'supports a configuration block' do
     context = ActiveRabbit::Configuration::Exchange::ExchangeContext.new
     context.configure do
@@ -10,10 +9,5 @@ describe ActiveRabbit::Configuration::Exchange do
         direct 'nested'
       end
     end
-
-    binding.pry
-
   end
-
-
 end
