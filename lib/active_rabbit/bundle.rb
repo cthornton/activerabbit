@@ -27,10 +27,12 @@ module ActiveRabbit
       @queue_context = Configuration::Queue::QueueContext.new
       @session_loader = Configuration::SessionLoader.new
       @loaded_sessions = {}
-      @environment = environment || ENV['ACTIVERABBIT_ENV'] || 'development'
+      @environment = environment || ENV['ACTIVERABBIT_ENV'] || ENV['RAILS_ENV'] || 'development'
     end
 
     def load_directory(directory_path)
+      raise ArgumentError, "Config directory '#{directory_path}' does not exist" unless File.exist?(directory_path)
+
       LOAD_DIRECTORY_MUTEX.synchronize do
         ActiveRabbit.temporarily_taint_configuration(self) do
           glob = File.join(directory_path, '**', '*.rb')

@@ -49,7 +49,7 @@ module ActiveRabbit::Configuration
     end
 
     def add_config_value(unqualified_name, value)
-      config_values[qualify_name(unqualified_name)] = value
+      config_values[normalize_name(unqualified_name)] = value
     end
 
     def effective_options(options = {})
@@ -82,6 +82,7 @@ module ActiveRabbit::Configuration
       search_values(fully_qualified_name) || raise(ArgumentError, "Unknown value '#{fully_qualified_name}'")
     end
 
+    # Does a search, in the format of ['some', 'namespace', 'value']
     def search_pieces(fully_qualified_name_array)
       # Last item
       if !fully_qualified_name_array.any?
@@ -91,10 +92,10 @@ module ActiveRabbit::Configuration
         return config_values[item]
       else
         search = fully_qualified_name_array.shift
-        if(context =  child_contexes[search])
+        if(context = child_contexes[search])
           return context.search_pieces(fully_qualified_name_array)
         else
-          return null
+          return nil
         end
       end
     end
