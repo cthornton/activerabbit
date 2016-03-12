@@ -20,7 +20,7 @@ module ActiveRabbit
     end
 
     def logger
-      @logger = Logger.new(STDOUT)
+      @logger ||= Logger.new(STDOUT)
     end
 
     def configuration
