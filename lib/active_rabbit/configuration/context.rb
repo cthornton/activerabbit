@@ -72,14 +72,24 @@ module ActiveRabbit::Configuration
       child_contexes[name] = context
     end
 
+    def search(fully_qualified_name)
+      search_pieces(normalize_name(fully_qualified_name).split('.'))
+    end
+
     # Given a fully qualified value, i.e. "some.namespace.some-value",
     # returns that value, or nil
     def search_values(fully_qualified_name)
-      search_pieces(normalize_name(fully_qualified_name).split('.'))
+      result = search(fully_qualified_name)
+      result.is_a?(Context) ? nil : result
     end
 
     def search_values!(fully_qualified_name)
       search_values(fully_qualified_name) || raise(ArgumentError, "Unknown value '#{fully_qualified_name}'")
+    end
+
+    def search_contexes(fully_qualified_name)
+      result = search(fully_qualified_name)
+      result.is_a?(Context) ? result : nil
     end
 
     # Does a search, in the format of ['some', 'namespace', 'value']
@@ -89,7 +99,7 @@ module ActiveRabbit::Configuration
         return nil
       elsif fully_qualified_name_array.size == 1
         item = fully_qualified_name_array[0]
-        return config_values[item]
+        return config_values[item] || child_contexes[item]
       else
         search = fully_qualified_name_array.shift
         if(context = child_contexes[search])

@@ -1,6 +1,7 @@
 require 'bunny'
-require 'active_rabbit/version'
 require 'logger'
+
+require 'active_rabbit/version'
 
 module ActiveRabbit
   autoload :Bundle,        'active_rabbit/bundle'

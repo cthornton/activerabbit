@@ -38,5 +38,17 @@ RSpec.describe ActiveRabbit::Configuration::Context do
     end
   end
 
-
+  describe 'options inheritance' do
+    it 'correctly inherits options' do
+      nested_context = context.search_contexes('level1.level2')
+      expected_options = {
+        option_a: 'apple',
+        option_b: 'bonzai',
+        option_c: 'carrot',
+        option_d: 'donut',
+        session: :default
+      }
+      expect(nested_context.default_options).to eq(expected_options)
+    end
+  end
 end
